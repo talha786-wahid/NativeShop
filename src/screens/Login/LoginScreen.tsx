@@ -6,6 +6,7 @@ import {
   Dimensions,
   Alert,
   TouchableOpacity,
+  ScrollView,
 } from 'react-native';
 import {NativeStackNavigationProp} from 'react-native-screens/lib/typescript/native-stack/types';
 import {RootStackParamList} from '@src/types';
@@ -63,55 +64,56 @@ const LoginScreen = () => {
   };
 
   const handleRegisterRedirect = () => {
-    console.log('orLogin');
     navigation.navigate('Signup');
   };
 
   return (
-    <View style={styles.container}>
-      <View style={styles.loginHeaderBox}>
-        <Text style={styles.loginHeaderTitle}>Sign in to your Account</Text>
-        <Text style={styles.loginHeaderSubTitle}>
-          Welcome back! Please sign in to continue.
-        </Text>
-      </View>
-      <View style={styles.loginFormContainer}>
-        <Input
-          placeholder="Enter email address..."
-          type="email"
-          value={email}
-          onChange={setEmail}
-          error={errors.email}
-        />
-        <Input
-          placeholder="Enter password..."
-          type="password"
-          value={password}
-          onChange={setPassword}
-          error={errors.password}
-        />
-        <Text style={styles.forgetPassword}>Forget Password?</Text>
-        <Button buttonTheme="primary" title="Login" onPress={handleLogin} />
-      </View>
-      <View>
-        <Text style={styles.orLogin}>Or login with</Text>
-        <View style={styles.socialButtonContainer}>
-          <SocialButton
-            image={facebook}
-            type="facebook"
-            onPress={() => console.log('Facebook login')}
-          />
-          <SocialButton
-            image={google}
-            type="google"
-            onPress={() => console.log('Google login')}
-          />
+    <ScrollView style={styles.container}>
+      <View style={styles.container}>
+        <View style={styles.loginHeaderBox}>
+          <Text style={styles.loginHeaderTitle}>Sign in to your Account</Text>
+          <Text style={styles.loginHeaderSubTitle}>
+            Welcome back! Please sign in to continue.
+          </Text>
         </View>
-        <TouchableOpacity onPress={handleRegisterRedirect}>
-          <Text style={styles.orLogin}>Create an account</Text>
-        </TouchableOpacity>
+        <View style={styles.loginFormContainer}>
+          <Input
+            placeholder="Enter email address..."
+            type="email"
+            value={email}
+            onChange={setEmail}
+            error={errors.email}
+          />
+          <Input
+            placeholder="Enter password..."
+            type="password"
+            value={password}
+            onChange={setPassword}
+            error={errors.password}
+          />
+          <Text style={styles.forgetPassword}>Forget Password?</Text>
+          <Button buttonTheme="primary" title="Login" onPress={handleLogin} />
+        </View>
+        <View>
+          <Text style={styles.orCreateAccount}>Or login with</Text>
+          <View style={styles.socialButtonContainer}>
+            <SocialButton
+              image={facebook}
+              type="facebook"
+              onPress={() => console.log('Facebook login')}
+            />
+            <SocialButton
+              image={google}
+              type="google"
+              onPress={() => console.log('Google login')}
+            />
+          </View>
+          <TouchableOpacity onPress={handleRegisterRedirect}>
+            <Text style={styles.orCreateAccount}>Create an account</Text>
+          </TouchableOpacity>
+        </View>
       </View>
-    </View>
+    </ScrollView>
   );
 };
 
@@ -153,7 +155,7 @@ const createStyles = (theme: Theme) =>
       fontSize: 16,
       textAlign: 'right',
     },
-    orLogin: {textAlign: 'center', paddingTop: 30},
+    orCreateAccount: {textAlign: 'center', paddingTop: 30, paddingBottom: 30},
   });
 
 export default LoginScreen;
