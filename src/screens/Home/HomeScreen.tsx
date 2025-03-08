@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {
   View,
   Text,
@@ -7,6 +7,8 @@ import {
   Image,
   TouchableOpacity,
   FlatList,
+  ActivityIndicator,
+  Platform,
 } from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
@@ -22,7 +24,11 @@ const HomeScreen = () => {
   const navigation =
     useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const theme = useTheme();
-  const {products, cart} = useProductStore();
+  const {products, cart, fetchProducts, isLoading} = useProductStore();
+
+  useEffect(() => {
+    fetchProducts();
+  }, [fetchProducts]);
 
   const featuredProducts = products.slice(0, 4);
   const topDeals = products.slice(4, 8);
@@ -116,10 +122,22 @@ const HomeScreen = () => {
     </View>
   );
 
+  if (isLoading) {
+    return (
+      <ScreenWrapper>
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color={theme.colors.limeGreen} />
+        </View>
+      </ScreenWrapper>
+    );
+  }
+
   return (
     <ScreenWrapper>
       {renderHeader()}
-      <ScrollView showsVerticalScrollIndicator={false}>
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={styles.scrollContent}>
         {renderBanner()}
         {renderSection('Featured Products', featuredProducts)}
         {renderSection('Top Deals', topDeals)}
@@ -227,6 +245,14 @@ const styles = StyleSheet.create({
   },
   productList: {
     paddingHorizontal: 16,
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  scrollContent: {
+    paddingBottom: Platform.OS === 'ios' ? 100 : 80,
   },
 });
 

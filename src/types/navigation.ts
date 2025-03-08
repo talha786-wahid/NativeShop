@@ -4,7 +4,11 @@ import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {CartItem} from './index';
 
 export type RootStackParamList = {
-  MainTabs: undefined;
+  MainTabs:
+    | {
+        screen?: 'HomeTab' | 'ShopTab' | 'WishlistTab' | 'ProfileTab';
+      }
+    | undefined;
   HomeTab: undefined;
   ShopTab: undefined;
   WishlistTab: undefined;

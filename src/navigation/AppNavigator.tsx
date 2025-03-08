@@ -8,6 +8,7 @@ import CheckoutScreen from '@src/screens/Checkout/CheckoutScreen';
 import OrderSuccessScreen from '@src/screens/OrderSuccess/OrderSuccessScreen';
 import TabNavigator from './TabNavigator';
 import {RootStackParamList} from '@src/types';
+import {StoreScreen} from '@src/screens';
 
 const Stack = createStackNavigator<RootStackParamList>();
 
@@ -25,6 +26,7 @@ const AppNavigator = () => {
         <Stack.Screen name="OrderSuccess" component={OrderSuccessScreen} />
         <Stack.Screen name="Login" component={LoginScreen} />
         <Stack.Screen name="Signup" component={SignUpScreen} />
+        <Stack.Screen name="ShopTab" component={StoreScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );

@@ -99,7 +99,17 @@ const CartScreen = () => {
           <Button
             title="Start Shopping"
             buttonTheme="primary"
-            onPress={() => navigation.navigate('ShopTab')}
+            onPress={() =>
+              navigation.reset({
+                index: 0,
+                routes: [
+                  {
+                    name: 'MainTabs',
+                    params: {screen: 'ShopTab'},
+                  },
+                ],
+              })
+            }
           />
         </View>
       </ScreenWrapper>
@@ -165,7 +175,17 @@ const CartScreen = () => {
           <Button
             title="Start Shopping"
             buttonTheme="primary"
-            onPress={() => navigation.navigate('ShopTab')}
+            onPress={() =>
+              navigation.reset({
+                index: 0,
+                routes: [
+                  {
+                    name: 'MainTabs',
+                    params: {screen: 'ShopTab'},
+                  },
+                ],
+              })
+            }
           />
         </View>
       )}
