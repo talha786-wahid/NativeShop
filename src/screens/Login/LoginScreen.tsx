@@ -141,12 +141,11 @@ const createStyles = (theme: Theme) =>
       fontSize: 18,
     },
     loginFormContainer: {
-      paddingTop: 50,
+      paddingTop: 70,
       paddingHorizontal: 30,
       gap: 15,
     },
     socialButtonContainer: {
-      marginTop: 30,
       flexDirection: 'column',
       gap: 15,
       paddingHorizontal: 30,
@@ -155,7 +154,7 @@ const createStyles = (theme: Theme) =>
       fontSize: 16,
       textAlign: 'right',
     },
-    orCreateAccount: {textAlign: 'center', paddingTop: 30, paddingBottom: 30},
+    orCreateAccount: {textAlign: 'center', paddingVertical: 20},
   });
 
 export default LoginScreen;

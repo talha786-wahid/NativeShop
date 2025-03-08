@@ -6,6 +6,8 @@ import ProductDetailsScreen from '@src/screens/ProductDetails/ProductDetailsScre
 import CartScreen from '@src/screens/Cart/CartScreen';
 import CheckoutScreen from '@src/screens/Checkout/CheckoutScreen';
 import OrderSuccessScreen from '@src/screens/OrderSuccess/OrderSuccessScreen';
+import SplashScreen from '@src/screens/Splash/SplashScreen';
+import OnboardingScreen from '@src/screens/Onboarding/OnboardingScreen';
 import TabNavigator from './TabNavigator';
 import {RootStackParamList} from '@src/types';
 import {StoreScreen} from '@src/screens';
@@ -16,9 +18,12 @@ const AppNavigator = () => {
   return (
     <NavigationContainer>
       <Stack.Navigator
+        initialRouteName="Splash"
         screenOptions={{
           headerShown: false,
         }}>
+        <Stack.Screen name="Splash" component={SplashScreen} />
+        <Stack.Screen name="Onboarding" component={OnboardingScreen} />
         <Stack.Screen name="MainTabs" component={TabNavigator} />
         <Stack.Screen name="ProductDetails" component={ProductDetailsScreen} />
         <Stack.Screen name="Cart" component={CartScreen} />

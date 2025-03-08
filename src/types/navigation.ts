@@ -4,6 +4,8 @@ import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {CartItem} from './index';
 
 export type RootStackParamList = {
+  Splash: undefined;
+  Onboarding: undefined;
   MainTabs:
     | {
         screen?: 'HomeTab' | 'ShopTab' | 'WishlistTab' | 'ProfileTab';

@@ -20,7 +20,7 @@ const TabNavigator = () => {
           backgroundColor: theme.colors.white,
           borderTopWidth: 1,
           borderTopColor: theme.colors.neutral[100],
-          height: 60,
+          height: 75,
           paddingBottom: 8,
           paddingTop: 8,
         },
