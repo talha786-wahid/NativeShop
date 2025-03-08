@@ -3,14 +3,25 @@ import {RouteProp} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {CartItem} from './index';
 
+export type RootStackScreens =
+  | 'Splash'
+  | 'Onboarding'
+  | 'MainTabs'
+  | 'HomeTab'
+  | 'ShopTab'
+  | 'WishlistTab'
+  | 'ProfileTab'
+  | 'ProductDetails'
+  | 'Cart'
+  | 'Checkout'
+  | 'Login'
+  | 'Signup'
+  | 'OrderSuccess';
+
 export type RootStackParamList = {
   Splash: undefined;
   Onboarding: undefined;
-  MainTabs:
-    | {
-        screen?: 'HomeTab' | 'ShopTab' | 'WishlistTab' | 'ProfileTab';
-      }
-    | undefined;
+  MainTabs: undefined;
   HomeTab: undefined;
   ShopTab: undefined;
   WishlistTab: undefined;

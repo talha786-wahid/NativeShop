@@ -50,6 +50,8 @@ export interface CartItem extends Product {
 
 export type RootStackParamList = {
   MainTabs: undefined;
+  Splash: undefined;
+  Onboarding: undefined;
   HomeTab: undefined;
   ShopTab: undefined;
   WishlistTab: undefined;
