@@ -4,7 +4,6 @@ import {
   Text,
   StyleSheet,
   Dimensions,
-  TouchableOpacity,
   FlatList,
   Animated,
   Platform,
@@ -142,6 +141,19 @@ const OnboardingScreen = () => {
     );
   };
 
+  const handleGetStarted = () => {
+    // Navigate to Home
+    navigation.reset({
+      index: 0,
+      routes: [
+        {
+          name: 'MainTabs',
+          params: {screen: 'HomeTab'},
+        },
+      ],
+    });
+  };
+
   return (
     <View style={[styles.container, {backgroundColor: theme.colors.white}]}>
       <FlatList
@@ -167,7 +179,7 @@ const OnboardingScreen = () => {
             <Button
               title="Skip"
               buttonTheme="light"
-              onPress={() => navigation.navigate('Signup')}
+              onPress={handleGetStarted}
             />
             <Button
               title="Next"
@@ -179,7 +191,7 @@ const OnboardingScreen = () => {
           <Button
             title="Get Started"
             buttonTheme="primary"
-            onPress={() => navigation.navigate('Signup')}
+            onPress={handleGetStarted}
           />
         )}
       </View>

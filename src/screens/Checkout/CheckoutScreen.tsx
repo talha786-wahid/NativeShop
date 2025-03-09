@@ -6,6 +6,8 @@ import {
   ScrollView,
   TouchableOpacity,
   Alert,
+  Platform,
+  KeyboardTypeOptions,
 } from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
@@ -14,6 +16,7 @@ import {RootStackParamList} from '@src/types';
 import {useTheme} from '@src/styles/ThemeProvider';
 import useProductStore from '@src/store/useProductStore';
 import {Button, Input, ScreenWrapper} from '@src/components';
+import {showToast} from '@src/utils/toast';
 
 interface CheckoutForm {
   fullName: string;
@@ -29,6 +32,17 @@ interface CheckoutForm {
 
 interface FormErrors {
   [key: string]: string;
+}
+
+interface InputProps {
+  label: string;
+  value: string;
+  onChange: (value: string) => void;
+  placeholder: string;
+  error?: string;
+  keyboardType?: KeyboardTypeOptions;
+  maxLength?: number;
+  secureTextEntry?: boolean;
 }
 
 const CheckoutScreen = () => {
@@ -49,10 +63,9 @@ const CheckoutScreen = () => {
   });
   const [errors, setErrors] = useState<FormErrors>({});
 
-  const totalAmount = cart.reduce(
-    (sum, item) => sum + item.price * item.quantity,
-    0,
-  );
+  const calculateTotal = () => {
+    return cart.reduce((total, item) => total + item.price * item.quantity, 0);
+  };
 
   const validateForm = () => {
     const newErrors: FormErrors = {};
@@ -112,23 +125,33 @@ const CheckoutScreen = () => {
     }
   };
 
-  const handleCheckout = () => {
-    if (validateForm()) {
-      navigation.navigate('OrderSuccess', {
-        orderDetails: {
-          orderId: Math.random().toString(36).substring(7).toUpperCase(),
-          totalAmount,
-          items: cart,
-          shippingAddress: {
-            fullName: formData.fullName,
-            address: formData.address,
-            city: formData.city,
-            zipCode: formData.zipCode,
-          },
-        },
-      });
-      clearCart();
+  const handlePlaceOrder = () => {
+    if (!validateForm()) {
+      showToast.error('Error', 'Please fill in all required fields');
+      return;
     }
+
+    const orderId = Math.random().toString(36).substring(2, 15);
+    const totalAmount = calculateTotal();
+
+    // Show success toast immediately when order is placed
+    showToast.success('Order Placed Successfully', `Order ID: ${orderId}`);
+
+    // Clear cart and navigate to success screen
+    clearCart();
+    navigation.replace('OrderSuccess', {
+      orderDetails: {
+        orderId,
+        totalAmount,
+        items: cart,
+        shippingAddress: {
+          fullName: formData.fullName,
+          address: formData.address,
+          city: formData.city,
+          zipCode: formData.zipCode,
+        },
+      },
+    });
   };
 
   return (
@@ -165,7 +188,6 @@ const CheckoutScreen = () => {
             onChange={value => handleInputChange('email', value)}
             placeholder="Enter your email"
             error={errors.email}
-            autoCapitalize="none"
             keyboardType="email-address"
           />
           <Input
@@ -186,7 +208,7 @@ const CheckoutScreen = () => {
             label="Address"
             value={formData.address}
             onChange={value => handleInputChange('address', value)}
-            placeholder="Enter your street address"
+            placeholder="Enter your address"
             error={errors.address}
           />
           <Input
@@ -202,7 +224,8 @@ const CheckoutScreen = () => {
             onChange={value => handleInputChange('zipCode', value)}
             placeholder="Enter ZIP code"
             error={errors.zipCode}
-            keyboardType="number-pad"
+            keyboardType="numeric"
+            maxLength={5}
           />
         </View>
 
@@ -220,35 +243,29 @@ const CheckoutScreen = () => {
             label="Card Number"
             value={formData.cardNumber}
             onChange={value => handleInputChange('cardNumber', value)}
-            placeholder="1234 5678 9012 3456"
+            placeholder="Enter card number"
             error={errors.cardNumber}
-            keyboardType="number-pad"
-            maxLength={19}
+            keyboardType="numeric"
+            maxLength={16}
           />
-          <View style={styles.cardRow}>
-            <View style={styles.cardField}>
-              <Input
-                label="Expiry Date"
-                value={formData.expiryDate}
-                onChange={value => handleInputChange('expiryDate', value)}
-                placeholder="MM/YY"
-                error={errors.expiryDate}
-                maxLength={5}
-              />
-            </View>
-            <View style={styles.cardField}>
-              <Input
-                label="CVV"
-                value={formData.cvv}
-                onChange={value => handleInputChange('cvv', value)}
-                placeholder="123"
-                error={errors.cvv}
-                keyboardType="number-pad"
-                maxLength={4}
-                secureTextEntry
-              />
-            </View>
-          </View>
+          <Input
+            label="Expiry Date"
+            value={formData.expiryDate}
+            onChange={value => handleInputChange('expiryDate', value)}
+            placeholder="MM/YY"
+            error={errors.expiryDate}
+            maxLength={5}
+          />
+          <Input
+            label="CVV"
+            value={formData.cvv}
+            onChange={value => handleInputChange('cvv', value)}
+            placeholder="Enter CVV"
+            error={errors.cvv}
+            keyboardType="numeric"
+            maxLength={3}
+            secureTextEntry
+          />
         </View>
       </ScrollView>
 
@@ -259,13 +276,13 @@ const CheckoutScreen = () => {
             Total
           </Text>
           <Text style={[styles.totalAmount, {color: theme.colors.black}]}>
-            ${totalAmount.toFixed(2)}
+            ${calculateTotal().toFixed(2)}
           </Text>
         </View>
         <Button
           title="Place Order"
           buttonTheme="primary"
-          onPress={handleCheckout}
+          onPress={handlePlaceOrder}
         />
       </View>
     </ScreenWrapper>
@@ -307,13 +324,6 @@ const styles = StyleSheet.create({
   },
   cardText: {
     fontSize: 16,
-  },
-  cardRow: {
-    flexDirection: 'row',
-    gap: 16,
-  },
-  cardField: {
-    flex: 1,
   },
   footer: {
     padding: 16,

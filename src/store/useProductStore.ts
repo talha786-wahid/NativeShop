@@ -1,5 +1,26 @@
 import {create} from 'zustand';
-import {ProductStore, Product, CartItem} from '@src/types';
+import {Product, CartItem} from '@src/types';
+import {showToast} from '@src/utils/toast';
+
+interface ProductStore {
+  products: Product[];
+  cart: CartItem[];
+  wishlist: Product[];
+  isLoading: boolean;
+  error: string | null;
+  fetchProducts: () => Promise<void>;
+  fetchProductById: (id: number) => Promise<Product | undefined>;
+  addToCart: (
+    product: Product,
+    quantity: number,
+    size?: string,
+    color?: string,
+  ) => void;
+  removeFromCart: (productId: number) => void;
+  updateCartItemQuantity: (productId: number, quantity: number) => void;
+  toggleWishlist: (product: Product) => void;
+  clearCart: () => void;
+}
 
 const useProductStore = create<ProductStore>((set, get) => ({
   products: [],
@@ -9,25 +30,24 @@ const useProductStore = create<ProductStore>((set, get) => ({
   error: null,
 
   fetchProducts: async () => {
+    set({isLoading: true, error: null});
     try {
-      set({isLoading: true, error: null});
       const response = await fetch('https://fakestoreapi.com/products');
       const data = await response.json();
       set({products: data, isLoading: false});
-    } catch (error) {
-      set({error: 'Failed to fetch products', isLoading: false});
+    } catch (error: any) {
+      set({error: error.message, isLoading: false});
+      showToast.error('Error', 'Failed to fetch products');
     }
   },
 
   fetchProductById: async (id: number) => {
     try {
-      set({isLoading: true, error: null});
       const response = await fetch(`https://fakestoreapi.com/products/${id}`);
       const data = await response.json();
-      set({isLoading: false});
       return data;
-    } catch (error) {
-      set({error: 'Failed to fetch product', isLoading: false});
+    } catch (error: any) {
+      showToast.error('Error', 'Failed to fetch product details');
       return undefined;
     }
   },
@@ -39,42 +59,45 @@ const useProductStore = create<ProductStore>((set, get) => ({
     color?: string,
   ) => {
     const cart = get().cart;
-    const existingItem = cart.find(
-      item =>
-        item.id === product.id &&
-        item.selectedSize === size &&
-        item.selectedColor === color,
-    );
+    const existingItem = cart.find(item => item.id === product.id);
 
     if (existingItem) {
-      set({
-        cart: cart.map(item =>
-          item === existingItem
-            ? {...item, quantity: item.quantity + quantity}
-            : item,
-        ),
-      });
+      const updatedCart = cart.map(item =>
+        item.id === product.id
+          ? {...item, quantity: item.quantity + quantity}
+          : item,
+      );
+      set({cart: updatedCart});
+      showToast.success('Updated', 'Item quantity updated in cart');
     } else {
-      const cartItem: CartItem = {
-        ...product,
-        quantity,
-        selectedSize: size,
-        selectedColor: color,
-      };
-      set({cart: [...cart, cartItem]});
+      set({
+        cart: [
+          ...cart,
+          {...product, quantity, selectedSize: size, selectedColor: color},
+        ],
+      });
+      showToast.success('Added to Cart', 'Item added successfully');
     }
   },
 
   removeFromCart: (productId: number) => {
-    set({cart: get().cart.filter(item => item.id !== productId)});
+    const cart = get().cart;
+    set({cart: cart.filter(item => item.id !== productId)});
+    showToast.info('Removed', 'Item removed from cart');
   },
 
   updateCartItemQuantity: (productId: number, quantity: number) => {
-    set({
-      cart: get().cart.map(item =>
+    const cart = get().cart;
+    if (quantity === 0) {
+      set({cart: cart.filter(item => item.id !== productId)});
+      showToast.info('Removed', 'Item removed from cart');
+    } else {
+      const updatedCart = cart.map(item =>
         item.id === productId ? {...item, quantity} : item,
-      ),
-    });
+      );
+      set({cart: updatedCart});
+      showToast.success('Updated', 'Cart quantity updated');
+    }
   },
 
   toggleWishlist: (product: Product) => {
@@ -83,8 +106,10 @@ const useProductStore = create<ProductStore>((set, get) => ({
 
     if (isInWishlist) {
       set({wishlist: wishlist.filter(item => item.id !== product.id)});
+      showToast.info('Removed', 'Item removed from wishlist');
     } else {
       set({wishlist: [...wishlist, product]});
+      showToast.success('Added', 'Item added to wishlist');
     }
   },
 

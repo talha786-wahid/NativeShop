@@ -9,16 +9,15 @@ import {
 } from 'react-native';
 import {useTheme} from '@src/styles/ThemeProvider';
 
-interface InputProps extends Omit<TextInputProps, 'onChange'> {
+export interface InputProps extends Omit<TextInputProps, 'onChange'> {
   label: string;
   value: string;
   onChange: (value: string) => void;
-  placeholder?: string;
+  placeholder: string;
   error?: string;
   keyboardType?: KeyboardTypeOptions;
   maxLength?: number;
   secureTextEntry?: boolean;
-  autoCapitalize?: 'none' | 'sentences' | 'words' | 'characters';
 }
 
 const Input: React.FC<InputProps> = ({
@@ -30,14 +29,15 @@ const Input: React.FC<InputProps> = ({
   keyboardType,
   maxLength,
   secureTextEntry,
-  autoCapitalize,
   ...props
 }) => {
   const theme = useTheme();
 
   return (
     <View style={styles.container}>
-      <Text style={[styles.label, {color: theme.colors.black}]}>{label}</Text>
+      <Text style={[styles.label, {color: theme.colors.primary[900]}]}>
+        {label}
+      </Text>
       <TextInput
         style={[
           styles.input,
@@ -45,7 +45,7 @@ const Input: React.FC<InputProps> = ({
             borderColor: error
               ? theme.colors.error[600]
               : theme.colors.neutral[200],
-            color: theme.colors.black,
+            color: theme.colors.primary[900],
           },
         ]}
         value={value}
@@ -55,7 +55,6 @@ const Input: React.FC<InputProps> = ({
         keyboardType={keyboardType}
         maxLength={maxLength}
         secureTextEntry={secureTextEntry}
-        autoCapitalize={autoCapitalize}
         {...props}
       />
       {error && (
@@ -69,11 +68,12 @@ const Input: React.FC<InputProps> = ({
 
 const styles = StyleSheet.create({
   container: {
-    gap: 8,
+    marginBottom: 16,
   },
   label: {
-    fontSize: 14,
-    fontWeight: '500',
+    fontSize: 16,
+    fontWeight: '600',
+    marginBottom: 8,
   },
   input: {
     height: 48,
@@ -83,7 +83,8 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   error: {
-    fontSize: 12,
+    fontSize: 14,
+    marginTop: 4,
   },
 });
 

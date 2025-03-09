@@ -1,153 +1,110 @@
 import React from 'react';
-import {View, Text, StyleSheet, ScrollView} from 'react-native';
-import {useRoute, useNavigation} from '@react-navigation/native';
-import {CheckCircle2} from 'lucide-react-native';
-import type {
-  OrderSuccessScreenNavigationProp,
-  OrderSuccessScreenRouteProp,
-} from '@src/types';
+import {View, Text, StyleSheet, Platform} from 'react-native';
 import {useTheme} from '@src/styles/ThemeProvider';
-import {Button, ScreenWrapper} from '@src/components';
+import {Button} from '@src/components';
+import {useNavigation, RouteProp, useRoute} from '@react-navigation/native';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {RootStackParamList} from '@src/types';
+import {CheckCircle2} from 'lucide-react-native';
+import Toast from 'react-native-toast-message';
+
+type OrderSuccessScreenRouteProp = RouteProp<
+  RootStackParamList,
+  'OrderSuccess'
+>;
 
 const OrderSuccessScreen = () => {
-  const route = useRoute<OrderSuccessScreenRouteProp>();
-  const navigation = useNavigation<OrderSuccessScreenNavigationProp>();
   const theme = useTheme();
+  const navigation =
+    useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+  const route = useRoute<OrderSuccessScreenRouteProp>();
   const {orderDetails} = route.params;
 
+  const handleContinueShopping = () => {
+    navigation.reset({
+      index: 0,
+      routes: [
+        {
+          name: 'MainTabs',
+          params: {screen: 'HomeTab'},
+        },
+      ],
+    });
+  };
+
   return (
-    <ScreenWrapper>
-      <ScrollView
-        style={styles.container}
-        contentContainerStyle={styles.content}>
-        <View style={styles.successIcon}>
-          <CheckCircle2
-            size={64}
-            color={theme.colors.sapphire}
-            fill={theme.colors.primary[50]}
-          />
+    <View style={[styles.container, {backgroundColor: theme.colors.white}]}>
+      <View style={styles.content}>
+        <View
+          style={[
+            styles.iconContainer,
+            {backgroundColor: theme.colors.sapphire},
+          ]}>
+          <CheckCircle2 size={64} color={theme.colors.white} />
         </View>
         <Text style={[styles.title, {color: theme.colors.black}]}>
-          Order Confirmed!
+          Order Successful!
         </Text>
-        <Text style={[styles.subtitle, {color: theme.colors.neutral[600]}]}>
-          Your order has been confirmed and will be shipped soon.
+        <Text style={[styles.subtitle, {color: theme.colors.neutral[400]}]}>
+          Your order has been placed successfully.
         </Text>
+        <Text style={[styles.orderInfo, {color: theme.colors.neutral[500]}]}>
+          Order ID: {orderDetails.orderId}
+        </Text>
+        <Text style={[styles.amount, {color: theme.colors.sapphire}]}>
+          Total Amount: ${orderDetails.totalAmount.toFixed(2)}
+        </Text>
+      </View>
 
-        <View
-          style={[styles.card, {backgroundColor: theme.colors.neutral[50]}]}>
-          <Text style={[styles.cardTitle, {color: theme.colors.black}]}>
-            Order Details
-          </Text>
-          <View style={styles.detailRow}>
-            <Text style={[styles.label, {color: theme.colors.neutral[600]}]}>
-              Order ID
-            </Text>
-            <Text style={[styles.value, {color: theme.colors.black}]}>
-              #{orderDetails.orderId}
-            </Text>
-          </View>
-          <View style={styles.detailRow}>
-            <Text style={[styles.label, {color: theme.colors.neutral[600]}]}>
-              Total Amount
-            </Text>
-            <Text style={[styles.value, {color: theme.colors.black}]}>
-              ${orderDetails.totalAmount.toFixed(2)}
-            </Text>
-          </View>
-        </View>
-
-        <View
-          style={[styles.card, {backgroundColor: theme.colors.neutral[50]}]}>
-          <Text style={[styles.cardTitle, {color: theme.colors.black}]}>
-            Shipping Address
-          </Text>
-          <Text style={[styles.address, {color: theme.colors.black}]}>
-            {orderDetails.shippingAddress.fullName}
-          </Text>
-          <Text style={[styles.address, {color: theme.colors.neutral[600]}]}>
-            {orderDetails.shippingAddress.address}
-          </Text>
-          <Text style={[styles.address, {color: theme.colors.neutral[600]}]}>
-            {orderDetails.shippingAddress.city},{' '}
-            {orderDetails.shippingAddress.zipCode}
-          </Text>
-        </View>
-
-        <View style={styles.buttonContainer}>
-          <Button
-            title="Continue Shopping"
-            buttonTheme="primary"
-            onPress={() => navigation.navigate('HomeTab')}
-          />
-          <View style={styles.buttonSpacer} />
-          <Button
-            title="View Orders"
-            buttonTheme="light"
-            onPress={() => navigation.navigate('ProfileTab')}
-          />
-        </View>
-      </ScrollView>
-    </ScreenWrapper>
+      <View style={styles.footer}>
+        <Button
+          title="Continue Shopping"
+          buttonTheme="primary"
+          onPress={handleContinueShopping}
+        />
+      </View>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    padding: 20,
   },
   content: {
-    padding: 24,
+    flex: 1,
     alignItems: 'center',
+    justifyContent: 'center',
+    gap: 16,
   },
-  successIcon: {
+  iconContainer: {
+    width: 120,
+    height: 120,
+    borderRadius: 60,
+    justifyContent: 'center',
+    alignItems: 'center',
     marginBottom: 24,
   },
   title: {
-    fontSize: 24,
-    fontWeight: '600',
-    marginBottom: 8,
-    textAlign: 'center',
+    fontSize: 28,
+    fontWeight: Platform.OS === 'ios' ? '700' : 'bold',
   },
   subtitle: {
     fontSize: 16,
     textAlign: 'center',
-    marginBottom: 32,
   },
-  card: {
-    width: '100%',
-    padding: 16,
-    borderRadius: 12,
-    marginBottom: 16,
+  orderInfo: {
+    fontSize: 14,
+    marginTop: 8,
   },
-  cardTitle: {
-    fontSize: 18,
+  amount: {
+    fontSize: 24,
     fontWeight: '600',
-    marginBottom: 16,
+    marginTop: 8,
   },
-  detailRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: 8,
-  },
-  label: {
-    fontSize: 14,
-  },
-  value: {
-    fontSize: 14,
-    fontWeight: '500',
-  },
-  address: {
-    fontSize: 14,
-    marginBottom: 4,
-  },
-  buttonContainer: {
-    width: '100%',
-    marginTop: 24,
-    gap: 12,
-  },
-  buttonSpacer: {
-    height: 8,
+  footer: {
+    paddingBottom: Platform.OS === 'ios' ? 20 : 0,
   },
 });
 
