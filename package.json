@@ -7,7 +7,9 @@
     "ios": "react-native run-ios",
     "lint": "eslint .",
     "start": "react-native start",
-    "test": "jest"
+    "test": "jest",
+    "pre-commit": "npm run start",
+    "prepare": "husky install"
   },
   "dependencies": {
     "@react-native-async-storage/async-storage": "^2.1.2",
@@ -38,14 +40,16 @@
     "@react-native/eslint-config": "0.78.0",
     "@react-native/metro-config": "0.78.0",
     "@react-native/typescript-config": "0.78.0",
+    "@testing-library/react-native": "^13.2.0",
     "@types/jest": "^29.5.13",
     "@types/react": "^19.0.0",
     "@types/react-test-renderer": "^19.0.0",
     "babel-plugin-module-resolver": "^5.0.2",
     "eslint": "^8.19.0",
-    "jest": "^29.6.3",
+    "husky": "^8.0.0",
+    "jest": "^29.7.0",
     "prettier": "2.8.8",
-    "react-test-renderer": "19.0.0",
+    "react-test-renderer": "^19.0.0",
     "typescript": "5.0.4"
   },
   "engines": {
