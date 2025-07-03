@@ -15,4 +15,4 @@ export default {
   BaseButton,
   State,
   gestureHandlerRootHOC,
-}; 
+};
